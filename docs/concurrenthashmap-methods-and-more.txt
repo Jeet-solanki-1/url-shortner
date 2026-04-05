@@ -1,0 +1,152 @@
+Here’s a complete reference for the main functions and methods of ConcurrentHashMap in Java, along with examples.
+ConcurrentHashMap is part of java.util.concurrent and provides thread-safe operations without locking the entire map.
+
+Key Points
+
+Package: java.util.concurrent
+Thread-safe: Multiple threads can read/write without external synchronization.
+Nulls: Does not allow null keys or null values.
+Performance: Uses internal segmentation to reduce contention.
+
+
+Commonly Used Methods
+
+
+
+Method
+Description
+
+
+
+
+put(K key, V value)
+Inserts or updates a key-value pair.
+
+
+putIfAbsent(K key, V value)
+Inserts only if the key is not already present.
+
+
+get(Object key)
+Retrieves the value for the given key.
+
+
+remove(Object key)
+Removes the mapping for the given key.
+
+
+remove(Object key, Object value)
+Removes only if key is mapped to the given value.
+
+
+replace(K key, V value)
+Replaces the value for the given key if present.
+
+
+replace(K key, V oldValue, V newValue)
+Replaces only if currently mapped to oldValue.
+
+
+containsKey(Object key)
+Checks if the key exists.
+
+
+containsValue(Object value)
+Checks if the value exists.
+
+
+size()
+Returns the number of key-value mappings.
+
+
+isEmpty()
+Checks if the map is empty.
+
+
+clear()
+Removes all mappings.
+
+
+forEach(long parallelismThreshold, BiConsumer<? super K,? super V> action)
+Performs action for each entry, possibly in parallel.
+
+
+compute(K key, BiFunction<? super K,? super V,? extends V> remappingFunction)
+Updates value atomically based on current value.
+
+
+computeIfAbsent(K key, Function<? super K,? extends V> mappingFunction)
+Computes and inserts value if key is absent.
+
+
+computeIfPresent(K key, BiFunction<? super K,? super V,? extends V> remappingFunction)
+Updates value if key is present.
+
+
+merge(K key, V value, BiFunction<? super V,? super V,? extends V> remappingFunction)
+Merges a value with an existing one atomically.
+
+
+keySet()
+Returns a set view of keys.
+
+
+values()
+Returns a collection view of values.
+
+
+entrySet()
+Returns a set view of key-value pairs.
+
+
+
+
+Example: Using ConcurrentHashMap
+Javaimport java.util.concurrent.ConcurrentHashMap;
+
+public class ConcurrentHashMapDemo {
+    public static void main(String[] args) {
+        // Create a ConcurrentHashMap
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+
+        // put() - Add entries
+        map.put("Apple", 10);
+        map.put("Banana", 20);
+
+        // putIfAbsent() - Add only if absent
+        map.putIfAbsent("Orange", 30);
+
+        // get() - Retrieve value
+        System.out.println("Apple count: " + map.get("Apple"));
+
+        // replace() - Update value
+        map.replace("Banana", 25);
+
+        // remove(key, value) - Conditional remove
+        map.remove("Orange", 40); // Won't remove
+        map.remove("Orange", 30); // Will remove
+
+        // computeIfAbsent() - Compute value if missing
+        map.computeIfAbsent("Mango", k -> 50);
+
+        // computeIfPresent() - Update if present
+        map.computeIfPresent("Apple", (k, v) -> v + 5);
+
+        // merge() - Merge values
+        map.merge("Mango", 10, Integer::sum);
+
+        // forEach() - Iterate
+        map.forEach((k, v) -> System.out.println(k + " => " + v));
+
+        // size()
+        System.out.println("Map size: " + map.size());
+    }
+}
+
+
+Thread-Safety Note
+Unlike HashMap, you can safely use ConcurrentHashMap in multi-threaded environments without external synchronization.
+However, compound operations (like check-then-act) should still use atomic methods like putIfAbsent, compute, or merge to avoid race conditions.
+
+If you want, I can also prepare a table of all ConcurrentHashMap methods with Java 17+ updates so you have a full cheat sheet.
+Do you want me to prepare that?
