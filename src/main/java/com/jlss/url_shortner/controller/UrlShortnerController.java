@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import com.jlss.url_shortner.service.UrlShortnerService;
 import org.springframework.web.servlet.view.RedirectView;
 @RestController
+@CrossOrigin(origins = "*")
 public class UrlShortnerController{
 	private final UrlShortnerService service;
 	public UrlShortnerController(UrlShortnerService service){

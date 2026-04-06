@@ -19,10 +19,11 @@ public class UrlShortnerService{
 	 String letters = "abcdefghijklmnopqrstuvwxyz";
 	int i=0;
 	public String shortenUrl(String url){
-		urlStore.putIfAbsent(String.valueOf(letters.charAt(i%letters.length())),url);
+		String key=String.valueOf(letters.charAt(i%letters.length()));
+		urlStore.putIfAbsent(key,url);
 		i++;
 		System.out.println("i: "+i+"next char/code: "+letters.charAt(i));
-		return urlStore.get(url);
+		return key;
 	}
 	public String getOriginal(String code){
 		if (urlStore.containsKey(code)){
