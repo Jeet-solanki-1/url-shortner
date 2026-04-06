@@ -14,8 +14,7 @@ public class UrlShortnerService{
 	 * 
 	 * Accepts URL as String 
 	 * Actions create a hashmap entry (cunccurent)
-	 * Returns the short code as string
-	 * */
+	
 	 String letters = "abcdefghijklmnopqrstuvwxyz";
 	int i=0;
 	public String shortenUrl(String url){
