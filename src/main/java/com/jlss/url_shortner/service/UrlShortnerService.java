@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 @Service
 public class UrlShortnerService{
 
-	private final Map<String,String> urlStore = new ConcurrentHashMap<>();
 
 	//Thread-safe in-memory storage
 	private final Map<String,UrlMapping> urlStore = new ConcurrentHashMap<>();
@@ -26,11 +25,66 @@ public class UrlShortnerService{
 		LocalDateTime expiresAt;
 	
 		boolean isExpired(){
-			return expiresAt != null && LocalDateTime.now().isAfter(expiresAt)
+			return expiresAt != null && LocalDateTime.now().isAfter(expiresAt);
 		}
 	}
 	public String shortenUrl(String originalUrl, Integer expiryMinutes){
-		//todo iMPL IT!
+		//Generate unique short code
+		String shortCode = generateUniqueCode();
+
+		//Calculate expiry time
+		LocalDateTime createdAt = LocalDateTime.now();
+		LocalDateTime expiresAt = expiryMinutes!= null ?
+			createdAt.plusMinutes(expiryMinutes) : null;
+
+		// Store mapping
+		urlStore.put(shortCode, new UrlMapping(originalUrl,createdAt, expiresAt));
+
+		return shortCode;
+
+	}
+
+	public String getOriginalUrl(String shortCode){
+		UrlMapping mapping = urlStore.get(shortCode);
+		if (mapping==null){
+			return null;
+		}
+		if (mapping.isExpired()){
+			urlStore.remove(shortCode); //Clean up expired entry
+			return null;
+		}
+		return mapping.originalUrl;
+	}
+	private String generateUniqueCode(){
+		StringBuilder code;
+		do{
+			code = new StringBuilder();
+			for (int i=0; i< CODE_LENGTH; i++){
+				int index = random.nextInt(CH.length());
+				code.append(CH.charAt(index));
+			}
+
+		} while(urlStore.containsKey(code.toString())); // Ensure uniquness
+		return code.toString();
+	}
+
+	// Optional:Get stats for a short code
+	public Map<String, Object> getStats(String shortCode){
+		UrlMapping mapping = urlStore.get(shortCode);
+		if (mapping==null){
+			return null;
+		}
+		return Map.of(
+			"originalUrl", mapping.originalUrl,
+			"createdAt", mapping.createdAt,
+			"expiresAt", mapping.expiresAt,
+			"isExpired", mapping.isExpired()
+		);
+	}
+
+	// Optional: Delete a short code
+	public boolean deleteShortCode(String shortCode){
+		return urlStore.remove(shortCode) != null;
 	}
 	/**
 	 * SELF -CDOES!
@@ -54,4 +108,6 @@ public class UrlShortnerService{
 			return null;
 		}
 	}
+	*/
+
 }
